@@ -24,12 +24,13 @@ const server = net.createServer((socket) => {
 			);
 		} else if (path.startsWith("/echo/")) {
 			const randomString = path.split("/echo/")[1];
+			const contentLength = "Content-Length: " + randomString.length;
 			socket.write(
 				[
 					"HTTP/1.1 200 OK",
 					"Content-Type: text/plain",
 					"Content-Encoding: UTF-8",
-					"Content-Length: 3",
+					contentLength,
 				].join("\r\n") + "\r\n\r\n"
 			);
 			socket.write(randomString + "\r\n\r\n");
