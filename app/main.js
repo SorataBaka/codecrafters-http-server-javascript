@@ -35,9 +35,11 @@ const server = net.createServer((socket) => {
 			socket.write("Content-Type: text/plain" + EOL);
 			socket.write("Content-Length: " + userAgent[0].length + EOF);
 			socket.write(userAgent[0] + EOF);
-		} else socket.write("HTTP/1.1 404 NOT FOUND" + EOL);
-
-		if (path === "/") socket.end();
+		} else {
+			socket.write("HTTP/1.1 404 NOT FOUND" + EOL);
+			socket.write("Content-Type: text/plain" + EOF);
+		}
+		socket.end();
 	});
 	socket.on("error", (error) => {
 		console.log(error);
