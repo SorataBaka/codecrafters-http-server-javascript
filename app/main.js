@@ -37,8 +37,7 @@ const server = net.createServer((socket) => {
 			socket.write(userAgent[0] + EOF);
 		} else if (path.startsWith("/files/")) {
 			const fileName = path.split("/files/")[1];
-			const fullFilePath = __dirname + "/../" + directory + "/" + fileName;
-			const resolvePath = Path.resolve(fullFilePath);
+			const resolvePath = Path.resolve(directory + "/" + fileName);
 			const checkExist = fs.existsSync(resolvePath);
 			if (!checkExist) {
 				socket.write("HTTP/1.1 404 NOT FOUND" + EOL);
@@ -50,6 +49,7 @@ const server = net.createServer((socket) => {
 			socket.write("Content-Type: application/octet-stream" + EOL);
 			socket.write("Content-Length: " + fileBuffer.length + EOF);
 			socket.write(fileBuffer);
+			socket.write(EOF);
 		} else {
 			socket.write("HTTP/1.1 404 NOT FOUND" + EOL);
 			socket.write("Content-Type: text/plain" + EOF);
