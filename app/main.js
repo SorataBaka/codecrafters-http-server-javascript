@@ -20,8 +20,6 @@ const server = net.createServer((socket) => {
 					"HTTP/1.1 200 OK",
 					"Content-Type: text/html; charset=UTF-8",
 					"Content-Encoding: UTF-8",
-					"Accept-Ranges: bytes",
-					"Connection: keep-alive",
 				].join("\r\n") + "\r\n\r\n"
 			);
 		} else if (path.startsWith("/echo/")) {
@@ -29,10 +27,9 @@ const server = net.createServer((socket) => {
 			socket.write(
 				[
 					"HTTP/1.1 200 OK",
-					"Content-Type: text/html; charset=UTF-8",
+					"Content-Type: text/plain",
 					"Content-Encoding: UTF-8",
-					"Accept-Ranges: bytes",
-					"Connection: keep-alive",
+					"Content-Length: 3",
 				].join("\r\n") + "\r\n\r\n"
 			);
 			socket.write(randomString + "\r\n\r\n");
@@ -40,10 +37,8 @@ const server = net.createServer((socket) => {
 			socket.write(
 				[
 					"HTTP/1.1 404 NOT FOUND",
-					"Content-Type: text/html; charset=UTF-8",
+					"Content-Type: text/plain; charset=UTF-8",
 					"Content-Encoding: UTF-8",
-					"Accept-Ranges: bytes",
-					"Connection: keep-alive",
 				].join("\r\n") + "\r\n\r\n"
 			);
 		}
