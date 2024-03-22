@@ -51,7 +51,7 @@ const server = net.createServer((socket) => {
 			socket.write(fileBuffer);
 			socket.write(EOF);
 		} else if (path.startsWith("/files/") && method === "POST") {
-			const fileBuffer = dataArray[1];
+			const fileBuffer = dataArray[dataArray.length - 1];
 			const fileName = path.split("/files/")[1];
 			const resolvePath = Path.resolve(directory + "/" + fileName);
 			fs.writeFileSync(resolvePath, fileBuffer.toString());
