@@ -22,20 +22,20 @@ const server = net.createServer((socket) => {
 		const hostPattern = /(?<=Host: ).*?(?=\r\n)/g;
 		const agentPattern = /(?<=User-Agent: ).*?(?=\r\n)/g;
 
-		if (path === "/") socket.write("HTTP/1.1 200 OK" + EOF);
+		if (path === "/" && method === "GET") socket.write("HTTP/1.1 200 OK" + EOF);
 		else if (path.startsWith("/echo/")) {
 			const content = path.split("/echo/")[1];
 			socket.write("HTTP/1.1 200 OK" + EOL);
 			socket.write("Content-Type: text/plain" + EOL);
 			socket.write("Content-Length: " + content.length + EOF);
 			socket.write(content + EOF);
-		} else if (path.startsWith("/user-agent")) {
+		} else if (path.startsWith("/user-agent") && method === "GET") {
 			const userAgent = data.match(agentPattern);
 			socket.write("HTTP/1.1 200 OK" + EOL);
 			socket.write("Content-Type: text/plain" + EOL);
 			socket.write("Content-Length: " + userAgent[0].length + EOF);
 			socket.write(userAgent[0] + EOF);
-		} else if (path.startsWith("/files/")) {
+		} else if (path.startsWith("/files/") && method === "GET") {
 			const fileName = path.split("/files/")[1];
 			const resolvePath = Path.resolve(directory + "/" + fileName);
 			const checkExist = fs.existsSync(resolvePath);
@@ -50,6 +50,14 @@ const server = net.createServer((socket) => {
 			socket.write("Content-Length: " + fileBuffer.length + EOF);
 			socket.write(fileBuffer);
 			socket.write(EOF);
+		} else if (path.startsWith("/files/") && method === "POST") {
+			const fileBuffer = dataArray[1];
+			const fileName = path.split("/files/")[1];
+			const resolvePath = Path.resolve(directory + "/" + fileName);
+			fs.writeFileSync(resolvePath, fileBuffer.toString());
+			socket.write("HTTP/1.1 201 CREATED" + EOL);
+			socket.write("Content-Type: text/plain" + EOF);
+			return socket.end();
 		} else {
 			socket.write("HTTP/1.1 404 NOT FOUND" + EOL);
 			socket.write("Content-Type: text/plain" + EOF);
