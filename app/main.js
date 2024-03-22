@@ -8,16 +8,11 @@ console.log("Logs from your program will appear here!");
 const server = net.createServer((socket) => {
 	socket.on("close", () => {
 		socket.end();
-		server.close();
 	});
 	socket.on("data", (buffer) => {
 		const data = buffer.toString();
 		const dataArray = data.split("\r\n");
-		const startLine = dataArray[0].split(" ");
-
-		const method = startLine[0];
-		const path = startLine[1];
-		const httpVer = startLine[2];
+		const [method, path, version] = dataArray[0].split(" ");
 
 		const hostPattern = /(?<=Host: ).*?(?=\r\n)/g;
 		const agentPattern = /(?<=User-Agent: ).*?(?=\r\n)/g;
