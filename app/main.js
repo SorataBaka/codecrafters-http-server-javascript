@@ -9,7 +9,39 @@ const server = net.createServer((socket) => {
 		socket.end();
 		server.close();
 	});
-	socket.write("HTTP/1.1 200 OK\r\n\r\n");
-	socket.end();
+	socket.on("data", (buffer) => {
+		const data = buffer.toString();
+		const dataArray = data.split("\r\n");
+		const startLine = dataArray[0].split(" ");
+		const path = startLine[1];
+		if (path === "/") {
+			socket.write(
+				[
+					"HTTP/1.1 200 OK",
+					"Content-Type: text/html; charset=UTF-8",
+					"Content-Encoding: UTF-8",
+					"Accept-Ranges: bytes",
+					"Connection: keep-alive",
+				].join(" ") + "\r\n"
+			);
+		} else {
+			socket.write(
+				[
+					"HTTP/1.1 404 NOT FOUND",
+					"Content-Type: text/html; charset=UTF-8",
+					"Content-Encoding: UTF-8",
+					"Accept-Ranges: bytes",
+					"Connection: keep-alive",
+				].join(" ") + "\r\n"
+			);
+		}
+		socket.end();
+	});
+	socket.on("error", (error) => {
+		console.log(error);
+	});
 });
+server.on("connection", () => console.log("New connection received"));
+server.on("error", (error) => console.log(error));
+
 server.listen(4221, "localhost");
