@@ -22,7 +22,7 @@ const server = net.createServer((socket) => {
 					"Content-Encoding: UTF-8",
 					"Accept-Ranges: bytes",
 					"Connection: keep-alive",
-				].join(" ") + "\r\n\r\n"
+				].join("\r\n") + "\r\n\r\n"
 			);
 		} else {
 			socket.write(
@@ -32,7 +32,7 @@ const server = net.createServer((socket) => {
 					"Content-Encoding: UTF-8",
 					"Accept-Ranges: bytes",
 					"Connection: keep-alive",
-				].join(" ") + "\r\n\r\n"
+				].join("\r\n") + "\r\n\r\n"
 			);
 		}
 		socket.end();
