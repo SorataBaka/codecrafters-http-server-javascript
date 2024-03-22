@@ -1,5 +1,6 @@
 const net = require("net");
-
+const EOL = "\r\n";
+const EOF = "\r\n\r\n";
 // You can use print statements as follows for debugging, they'll be visible when running tests.
 console.log("Logs from your program will appear here!");
 
@@ -13,37 +14,30 @@ const server = net.createServer((socket) => {
 		const data = buffer.toString();
 		const dataArray = data.split("\r\n");
 		const startLine = dataArray[0].split(" ");
+
+		const method = startLine[0];
 		const path = startLine[1];
-		if (path === "/") {
-			socket.write(
-				[
-					"HTTP/1.1 200 OK",
-					"Content-Type: text/html; charset=UTF-8",
-					"Content-Encoding: UTF-8",
-				].join("\r\n") + "\r\n\r\n"
-			);
-		} else if (path.startsWith("/echo/")) {
-			const randomString = path.split("/echo/")[1];
-			const contentLength = "Content-Length: " + randomString.length;
-			socket.write(
-				[
-					"HTTP/1.1 200 OK",
-					"Content-Type: text/plain",
-					"Content-Encoding: UTF-8",
-					contentLength,
-				].join("\r\n") + "\r\n\r\n"
-			);
-			socket.write(randomString + "\r\n\r\n");
-		} else {
-			socket.write(
-				[
-					"HTTP/1.1 404 NOT FOUND",
-					"Content-Type: text/plain; charset=UTF-8",
-					"Content-Encoding: UTF-8",
-				].join("\r\n") + "\r\n\r\n"
-			);
-		}
-		socket.end();
+		const httpVer = startLine[2];
+
+		const hostPattern = /(?<=Host: ).*?(?=\r\n)/g;
+		const agentPattern = /(?<=User-Agent: ).*?(?=\r\n)/g;
+
+		if (path === "/") socket.write("HTTP/1.1 200 OK" + EOF);
+		else if (path.startsWith("/echo/")) {
+			const content = path.split("/echo/")[1];
+			socket.write("HTTP/1.1 200 OK" + EOL);
+			socket.write("Content-Type: text/plain" + EOL);
+			socket.write("Content-Length: " + content.length + EOF);
+			socket.write(content + EOF);
+		} else if (path.startsWith("/user-agent")) {
+			const userAgent = data.match(agentPattern);
+			socket.write("HTTP/1.1 200 OK" + EOL);
+			socket.write("Content-Type: text/plain" + EOL);
+			socket.write("Content-Length: " + userAgent[0].length + EOF);
+			socket.write(userAgent[0] + EOF);
+		} else socket.write("HTTP/1.1 404 NOT FOUND" + EOL);
+
+		if (path === "/") socket.end();
 	});
 	socket.on("error", (error) => {
 		console.log(error);
