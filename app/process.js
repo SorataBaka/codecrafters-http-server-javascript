@@ -52,13 +52,3 @@ module.exports = (requestBuffer, socket) => {
 	socket.write(header);
 	return socket.end();
 };
-
-// else if (path.startsWith("/files/") && method === "POST") {
-// 	const fileBuffer = dataArray[dataArray.length - 1];
-// 	const fileName = path.split("/files/")[1];
-// 	const resolvePath = Path.resolve(directory + "/" + fileName);
-// 	fs.writeFileSync(resolvePath, fileBuffer.toString());
-// 	socket.write("HTTP/1.1 201 CREATED" + EOL);
-// 	socket.write("Content-Type: text/plain" + EOF);
-// 	return socket.end();
-// }
