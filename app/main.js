@@ -24,6 +24,18 @@ const server = net.createServer((socket) => {
 					"Connection: keep-alive",
 				].join("\r\n") + "\r\n\r\n"
 			);
+		} else if (path.startsWith("/echo/")) {
+			const randomString = path.split("/echo/")[1];
+			socket.write(
+				[
+					"HTTP/1.1 200 OK",
+					"Content-Type: text/html; charset=UTF-8",
+					"Content-Encoding: UTF-8",
+					"Accept-Ranges: bytes",
+					"Connection: keep-alive",
+				].join("\r\n") + "\r\n\r\n"
+			);
+			socket.write(randomString + "\r\n\r\n");
 		} else {
 			socket.write(
 				[
